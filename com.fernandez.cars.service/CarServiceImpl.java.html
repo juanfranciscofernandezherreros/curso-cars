@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CarServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.fernandez.cars.service</a> &gt; <span class="el_source">CarServiceImpl.java</span></div><h1>CarServiceImpl.java</h1><pre class="source lang-java linenums">package com.fernandez.cars.service;
+import com.fernandez.cars.dto.CarDTO;
+import com.fernandez.cars.exception.EntityNotFoundException;
+import com.fernandez.cars.model.Car;
+import com.fernandez.cars.repository.CarRepository;
+import com.fernandez.cars.utils.ObjectMapperUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+<span class="fc" id="L19">@Slf4j</span>
+<span class="fc" id="L20">@RequiredArgsConstructor</span>
+public class CarServiceImpl implements CarService {
+    
+    private final CarRepository carRepository;
+
+    @Override
+    public Page&lt;CarDTO&gt; findAllCars(Pageable pageable) {
+<span class="nc" id="L27">        log.info(&quot;CarServiceImpl[findAllCars]&quot;);</span>
+<span class="nc" id="L28">        return ObjectMapperUtils.mapEntityPageIntoDtoPage(carRepository.findAll(pageable), CarDTO.class);</span>
+    }
+
+    @Override
+    public CarDTO findCarById(Long carId) {
+<span class="fc" id="L33">        log.info(&quot;CarServiceImpl[findCarById]&quot;, carId);</span>
+<span class="fc" id="L34">        Optional&lt;Car&gt; optionalCar = carRepository.findById(carId);</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if(!optionalCar.isPresent()){</span>
+<span class="nc" id="L36">            throw new EntityNotFoundException(Car.class, &quot;id&quot;, carId.toString());</span>
+        }
+<span class="fc" id="L38">        return ObjectMapperUtils.map(optionalCar,CarDTO.class);</span>
+    }
+
+    @Override
+    public CarDTO createOrUpdateCar(CarDTO carDTO) {
+<span class="fc" id="L43">        log.info(&quot;CarServiceImpl[createOrUpdateCar]&quot; , carDTO);</span>
+<span class="fc" id="L44">        return ObjectMapperUtils.map(carRepository.save(ObjectMapperUtils.map(carDTO,Car.class)),CarDTO.class);</span>
+    }
+
+    @Override
+    public void deleteCarById(Long carId) {
+<span class="fc" id="L49">        log.info(&quot;CarServiceImpl[deleteCarById]&quot;, carId);</span>
+<span class="fc" id="L50">        Optional&lt;Car&gt; optionalCar = carRepository.findById(carId);</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if(!optionalCar.isPresent()){</span>
+<span class="nc" id="L52">            throw new EntityNotFoundException(Car.class, &quot;id&quot;, carId.toString());</span>
+        }
+<span class="fc" id="L54">        carRepository.deleteById(carId);</span>
+<span class="fc" id="L55">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
