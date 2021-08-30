@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RequestAndResponseLoggingFilter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.fernandez.cars.config</a> &gt; <span class="el_source">RequestAndResponseLoggingFilter.java</span></div><h1>RequestAndResponseLoggingFilter.java</h1><pre class="source lang-java linenums">package com.fernandez.cars.config;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
+
+/**
+ * Spring Web filter for logging request and response.
+ *
+ * @author Hidetake Iwata
+ * @see org.springframework.web.filter.AbstractRequestLoggingFilter
+ * @see ContentCachingRequestWrapper
+ * @see ContentCachingResponseWrapper
+ */
+<span class="fc" id="L30">@Slf4j</span>
+<span class="fc" id="L31">public class RequestAndResponseLoggingFilter extends OncePerRequestFilter {</span>
+
+<span class="fc" id="L33">    private static final List&lt;MediaType&gt; VISIBLE_TYPES = Arrays.asList(</span>
+<span class="fc" id="L34">            MediaType.valueOf(&quot;text/*&quot;),</span>
+            MediaType.APPLICATION_FORM_URLENCODED,
+            MediaType.APPLICATION_JSON,
+            MediaType.APPLICATION_XML,
+<span class="fc" id="L38">            MediaType.valueOf(&quot;application/*+json&quot;),</span>
+<span class="fc" id="L39">            MediaType.valueOf(&quot;application/*+xml&quot;),</span>
+            MediaType.MULTIPART_FORM_DATA
+    );
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (isAsyncDispatch(request)) {</span>
+<span class="nc" id="L46">            filterChain.doFilter(request, response);</span>
+        } else {
+<span class="nc" id="L48">            doFilterWrapped(wrapRequest(request), wrapResponse(response), filterChain);</span>
+        }
+<span class="nc" id="L50">    }</span>
+
+    protected void doFilterWrapped(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response, FilterChain filterChain) throws ServletException, IOException {
+        try {
+<span class="nc" id="L54">            beforeRequest(request, response);</span>
+<span class="nc" id="L55">            filterChain.doFilter(request, response);</span>
+        }
+        finally {
+<span class="nc" id="L58">            afterRequest(request, response);</span>
+<span class="nc" id="L59">            response.copyBodyToResponse();</span>
+        }
+<span class="nc" id="L61">    }</span>
+
+    protected void beforeRequest(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (log.isInfoEnabled()) {</span>
+<span class="nc" id="L65">            logRequestHeader(request, request.getRemoteAddr() + &quot;|&gt;&quot;);</span>
+        }
+<span class="nc" id="L67">    }</span>
+
+    protected void afterRequest(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) {
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (log.isInfoEnabled()) {</span>
+<span class="nc" id="L71">            logRequestBody(request, request.getRemoteAddr() + &quot;|&gt;&quot;);</span>
+<span class="nc" id="L72">            logResponse(response, request.getRemoteAddr() + &quot;|&lt;&quot;);</span>
+        }
+<span class="nc" id="L74">    }</span>
+
+    private static void logRequestHeader(ContentCachingRequestWrapper request, String prefix) {
+<span class="nc" id="L77">        val queryString = request.getQueryString();</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        if (queryString == null) {</span>
+<span class="nc" id="L79">            log.info(&quot;{} {} {}&quot;, prefix, request.getMethod(), request.getRequestURI());</span>
+        } else {
+<span class="nc" id="L81">            log.info(&quot;{} {} {}?{}&quot;, prefix, request.getMethod(), request.getRequestURI(), queryString);</span>
+        }
+<span class="nc" id="L83">        Collections.list(request.getHeaderNames()).forEach(headerName -&gt;</span>
+<span class="nc" id="L84">                Collections.list(request.getHeaders(headerName)).forEach(headerValue -&gt;</span>
+<span class="nc" id="L85">                        log.info(&quot;{} {}: {}&quot;, prefix, headerName, headerValue)));</span>
+<span class="nc" id="L86">        log.info(&quot;{}&quot;, prefix);</span>
+<span class="nc" id="L87">    }</span>
+
+    private static void logRequestBody(ContentCachingRequestWrapper request, String prefix) {
+<span class="nc" id="L90">        val content = request.getContentAsByteArray();</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (content.length &gt; 0) {</span>
+<span class="nc" id="L92">            logContent(content, request.getContentType(), request.getCharacterEncoding(), prefix);</span>
+        }
+<span class="nc" id="L94">    }</span>
+
+    private static void logResponse(ContentCachingResponseWrapper response, String prefix) {
+<span class="nc" id="L97">        val status = response.getStatus();</span>
+<span class="nc" id="L98">        log.info(&quot;{} {} {}&quot;, prefix, status, HttpStatus.valueOf(status).getReasonPhrase());</span>
+<span class="nc" id="L99">        response.getHeaderNames().forEach(headerName -&gt;</span>
+<span class="nc" id="L100">                response.getHeaders(headerName).forEach(headerValue -&gt;</span>
+<span class="nc" id="L101">                        log.info(&quot;{} {}: {}&quot;, prefix, headerName, headerValue)));</span>
+<span class="nc" id="L102">        log.info(&quot;{}&quot;, prefix);</span>
+<span class="nc" id="L103">        val content = response.getContentAsByteArray();</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (content.length &gt; 0) {</span>
+<span class="nc" id="L105">            logContent(content, response.getContentType(), response.getCharacterEncoding(), prefix);</span>
+        }
+<span class="nc" id="L107">    }</span>
+
+    private static void logContent(byte[] content, String contentType, String contentEncoding, String prefix) {
+<span class="nc" id="L110">        val mediaType = MediaType.valueOf(contentType);</span>
+<span class="nc" id="L111">        val visible = VISIBLE_TYPES.stream().anyMatch(visibleType -&gt; visibleType.includes(mediaType));</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (visible) {</span>
+            try {
+<span class="nc" id="L114">                val contentString = new String(content, contentEncoding);</span>
+<span class="nc" id="L115">                Stream.of(contentString.split(&quot;\r\n|\r|\n&quot;)).forEach(line -&gt; log.info(&quot;{} {}&quot;, prefix, line));</span>
+<span class="nc" id="L116">            } catch (UnsupportedEncodingException e) {</span>
+<span class="nc" id="L117">                log.info(&quot;{} [{} bytes content]&quot;, prefix, content.length);</span>
+<span class="nc" id="L118">            }</span>
+        } else {
+<span class="nc" id="L120">            log.info(&quot;{} [{} bytes content]&quot;, prefix, content.length);</span>
+        }
+<span class="nc" id="L122">    }</span>
+
+    private static ContentCachingRequestWrapper wrapRequest(HttpServletRequest request) {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (request instanceof ContentCachingRequestWrapper) {</span>
+<span class="nc" id="L126">            return (ContentCachingRequestWrapper) request;</span>
+        } else {
+<span class="nc" id="L128">            return new ContentCachingRequestWrapper(request);</span>
+        }
+    }
+
+    private static ContentCachingResponseWrapper wrapResponse(HttpServletResponse response) {
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (response instanceof ContentCachingResponseWrapper) {</span>
+<span class="nc" id="L134">            return (ContentCachingResponseWrapper) response;</span>
+        } else {
+<span class="nc" id="L136">            return new ContentCachingResponseWrapper(response);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
