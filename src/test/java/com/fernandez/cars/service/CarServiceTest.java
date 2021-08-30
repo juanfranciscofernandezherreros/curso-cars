@@ -3,25 +3,16 @@ package com.fernandez.cars.service;
 import com.fernandez.cars.dto.CarDTO;
 import com.fernandez.cars.model.Car;
 import com.fernandez.cars.repository.CarRepository;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,16 +39,6 @@ public class CarServiceTest {
         carRepository.findAll(pageable);
         verify(carRepository,times(1)).findAll(pageable);
         verifyNoMoreInteractions(carRepository);
-    }
-
-    @Test
-    public void findAllCarsWithPagination() {
-        Page<Car> page = new PageImpl<Car>(
-                IntStream.range(1, 10)
-                        .mapToObj(i -> getCar(1L,"Marcas","Modelos",5))
-                        .collect(Collectors.toList()));
-
-        when(carRepository.findAll(any(Pageable.class))).thenReturn(page);
     }
 
     @Test

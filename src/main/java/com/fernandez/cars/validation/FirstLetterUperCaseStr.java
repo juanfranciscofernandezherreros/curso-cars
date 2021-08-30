@@ -11,10 +11,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Retention(RUNTIME)
 @Target({ FIELD, ANNOTATION_TYPE, TYPE_USE })
-@Constraint(validatedBy = StrValidator.class)
-public @interface ValidStr {
+@Constraint(validatedBy = FirstLetterUpperCaseValidator.class)
+public @interface FirstLetterUperCaseStr {
 
-    String message() default "";
+    String message() default "First letter uppercase";
 
     Class<?>[] groups() default {};
 

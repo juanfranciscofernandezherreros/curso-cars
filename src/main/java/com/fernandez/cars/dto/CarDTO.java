@@ -1,6 +1,6 @@
 package com.fernandez.cars.dto;
 
-import com.fernandez.cars.validation.ValidStr;
+import com.fernandez.cars.validation.FirstLetterUperCaseStr;
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
@@ -10,10 +10,11 @@ public class CarDTO {
     private Long id;
 
     @NotBlank
-    @ValidStr
+    @FirstLetterUperCaseStr
     private String marca;
 
     @NotBlank
+    @FirstLetterUperCaseStr
     private String modelo;
 
     private int totalPlaces;
