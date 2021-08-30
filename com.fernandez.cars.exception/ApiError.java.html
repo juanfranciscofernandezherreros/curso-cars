@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiError.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jacoco.exec</a> &gt; <a href="index.source.html" class="el_package">com.fernandez.cars.exception</a> &gt; <span class="el_source">ApiError.java</span></div><h1>ApiError.java</h1><pre class="source lang-java linenums">package com.fernandez.cars.exception;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
+import com.fernandez.cars.utils.LowerCaseClassNameResolver;
+import lombok.Data;
+import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import javax.validation.ConstraintViolation;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+<span class="nc bnc" id="L18" title="All 46 branches missed.">@Data</span>
+@JsonTypeInfo(include = JsonTypeInfo.As.WRAPPER_OBJECT, use = JsonTypeInfo.Id.CUSTOM, property = &quot;error&quot;, visible = true)
+@JsonTypeIdResolver(LowerCaseClassNameResolver.class)
+public
+class ApiError {
+
+<span class="nc" id="L24">    private HttpStatus status;</span>
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = &quot;dd-MM-yyyy hh:mm:ss&quot;)
+<span class="nc" id="L26">    private LocalDateTime timestamp;</span>
+<span class="nc" id="L27">    private String message;</span>
+<span class="nc" id="L28">    private String debugMessage;</span>
+<span class="nc" id="L29">    private List&lt;ApiSubError&gt; subErrors;</span>
+
+<span class="nc" id="L31">    private ApiError() {</span>
+<span class="nc" id="L32">        timestamp = LocalDateTime.now();</span>
+<span class="nc" id="L33">    }</span>
+
+    public ApiError(HttpStatus status) {
+<span class="nc" id="L36">        this();</span>
+<span class="nc" id="L37">        this.status = status;</span>
+<span class="nc" id="L38">    }</span>
+
+    public ApiError(HttpStatus status, Throwable ex) {
+<span class="nc" id="L41">        this();</span>
+<span class="nc" id="L42">        this.status = status;</span>
+<span class="nc" id="L43">        this.message = &quot;Unexpected error&quot;;</span>
+<span class="nc" id="L44">        this.debugMessage = ex.getLocalizedMessage();</span>
+<span class="nc" id="L45">    }</span>
+
+    public ApiError(HttpStatus status, String message, Throwable ex) {
+<span class="nc" id="L48">        this();</span>
+<span class="nc" id="L49">        this.status = status;</span>
+<span class="nc" id="L50">        this.message = message;</span>
+<span class="nc" id="L51">        this.debugMessage = ex.getLocalizedMessage();</span>
+<span class="nc" id="L52">    }</span>
+
+    private void addSubError(ApiSubError subError) {
+<span class="nc bnc" id="L55" title="All 2 branches missed.">        if (subErrors == null) {</span>
+<span class="nc" id="L56">            subErrors = new ArrayList&lt;&gt;();</span>
+        }
+<span class="nc" id="L58">        subErrors.add(subError);</span>
+<span class="nc" id="L59">    }</span>
+
+    private void addValidationError(String object, String field, Object rejectedValue, String message) {
+<span class="nc" id="L62">        addSubError(new ApiValidationError(object, field, rejectedValue, message));</span>
+<span class="nc" id="L63">    }</span>
+
+    private void addValidationError(String object, String message) {
+<span class="nc" id="L66">        addSubError(new ApiValidationError(object, message));</span>
+<span class="nc" id="L67">    }</span>
+
+    private void addValidationError(FieldError fieldError) {
+<span class="nc" id="L70">        this.addValidationError(</span>
+<span class="nc" id="L71">                fieldError.getObjectName(),</span>
+<span class="nc" id="L72">                fieldError.getField(),</span>
+<span class="nc" id="L73">                fieldError.getRejectedValue(),</span>
+<span class="nc" id="L74">                fieldError.getDefaultMessage());</span>
+<span class="nc" id="L75">    }</span>
+
+    public void addValidationErrors(List&lt;FieldError&gt; fieldErrors) {
+<span class="nc" id="L78">        fieldErrors.forEach(this::addValidationError);</span>
+<span class="nc" id="L79">    }</span>
+
+    private void addValidationError(ObjectError objectError) {
+<span class="nc" id="L82">        this.addValidationError(</span>
+<span class="nc" id="L83">                objectError.getObjectName(),</span>
+<span class="nc" id="L84">                objectError.getDefaultMessage());</span>
+<span class="nc" id="L85">    }</span>
+
+    public void addValidationError(List&lt;ObjectError&gt; globalErrors) {
+<span class="nc" id="L88">        globalErrors.forEach(this::addValidationError);</span>
+<span class="nc" id="L89">    }</span>
+
+    /**
+     * Utility method for adding error of ConstraintViolation. Usually when a @Validated validation fails.
+     *
+     * @param cv the ConstraintViolation
+     */
+    private void addValidationError(ConstraintViolation&lt;?&gt; cv) {
+<span class="nc" id="L97">        this.addValidationError(</span>
+<span class="nc" id="L98">                cv.getRootBeanClass().getSimpleName(),</span>
+<span class="nc" id="L99">                ((PathImpl) cv.getPropertyPath()).getLeafNode().asString(),</span>
+<span class="nc" id="L100">                cv.getInvalidValue(),</span>
+<span class="nc" id="L101">                cv.getMessage());</span>
+<span class="nc" id="L102">    }</span>
+
+    public void addValidationErrors(Set&lt;ConstraintViolation&lt;?&gt;&gt; constraintViolations) {
+<span class="nc" id="L105">        constraintViolations.forEach(this::addValidationError);</span>
+<span class="nc" id="L106">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
