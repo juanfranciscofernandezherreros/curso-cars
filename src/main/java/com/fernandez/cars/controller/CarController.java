@@ -1,5 +1,6 @@
 package com.fernandez.cars.controller;
 
+import com.fernandez.cars.config.AuthenticationInterceptor;
 import com.fernandez.cars.dto.CarDTO;
 import com.fernandez.cars.service.CarService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -59,6 +60,12 @@ public class CarController {
     public void deleteCarById(@PathVariable("carId") Long carId) {
         log.info("CarsController[deleteCarById]");
         carService.deleteCarById(carId);
-    }    
+    }
+
+    @GetMapping("/car")
+    public void findCarById() {
+        AuthenticationInterceptor interceptor = new AuthenticationInterceptor("C4MTYH4bJTlvYGMqpWqPoiasqRGkvyxxb56C4N5o0RaxrRwX1sRtGNvuVqI7CyPb", "MTznaAmLyUICoGXN7uZasgmY5Gy3hYNkXX3FZ5VhFGEOdxedajT1iByhZffdmnOw");
+        System.out.println(interceptor);
+    }
     
 }

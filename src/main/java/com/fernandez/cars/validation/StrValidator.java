@@ -7,12 +7,12 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 public class StrValidator implements ConstraintValidator<ValidStr, String> {
-    private String regex = "/^[A-Za-z]+$/";
+    private String regex = "/^[A-Z]+$/";
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
         if (StringUtils.isBlank(email))
-            return true;
+            return false;
 
         Pattern pat = Pattern.compile(regex);
         return pat.matcher(email).matches();

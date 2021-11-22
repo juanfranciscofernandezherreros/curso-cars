@@ -10,7 +10,6 @@ public class CarDTO {
     private Long id;
 
     @NotBlank
-    @ValidStr
     private String marca;
 
     @NotBlank
