@@ -1,16 +1,39 @@
-
-docker run --rm -it --name db-postresql -e POSTGRES_PASSWORD=docker -e POSTGRES_USER=docker -e POSTGRES_DB=docker postgres:
-alpine
-
-https://dev.to/jarjanazy/the-simple-guide-to-dockerizing-spring-boot-og4
-
 1) mvn install -DskipTests
 
 docker login -u admin -p admin localhost:8123
 
 **2) docker build -t demo: .**
 
-docker run -p 8084:8084 -it --rm --name demo -e POSTGRES_SERVICES=192.168.1.24 -e POSTGRES_PORT=5432 -e POSTGRES_DB=postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secure_pass_here -e LOG_LEVEL=info -e DDL_AUTO=none -e LOG_FILE=/sbpgdocker.log -e API_PORT=8084 -e CONTEXT_PATH=/v1/api demo
+docker run -p 8084:8084 -it --rm --name demo 
+-e POSTGRES_SERVICES=192.168.1.24 
+-e POSTGRES_PORT=5432 
+-e POSTGRES_DB=postgres 
+-e POSTGRES_USER=postgres 
+-e POSTGRES_PASSWORD=secure_pass_here 
+-e LOG_LEVEL=info 
+-e DDL_AUTO=none 
+-e LOG_FILE=/sbpgdocker.log 
+-e API_PORT=8084 
+-e CONTEXT_PATH=/v1/api demo
+
+version: '2'
+services:
+curso-cars:
+image: 'demo:latest'
+restart: always   
+environment:
+- POSTGRES_SERVICES=192.168.1.24
+- POSTGRES_PORT=5432
+- POSTGRES_DB=postgres
+- POSTGRES_USER=postgres
+- POSTGRES_PASSWORD=secure_pass_here
+- LOG_LEVEL=info
+- DDL_AUTO=none
+- LOG_FILE=/sbpgdocker.log
+- API_PORT=8084
+- CONTEXT_PATH=/v1/api
+ports:
+- '8084:8084'
 
 http://localhost:8084/v1/api/swagger-ui.html
 
