@@ -1,5 +1,5 @@
-FROM adoptopenjdk/openjdk11:alpine-jre
-EXPOSE 8083
-ARG JAR_FILE=target/cars-0.0.1-SNAPSHOT.jar
-ADD ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+FROM adoptopenjdk:11-jre-hotspot
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} application.jar
+EXPOSE 8084
+ENTRYPOINT ["java","-jar","/application.jar"]

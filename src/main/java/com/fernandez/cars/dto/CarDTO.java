@@ -1,6 +1,5 @@
 package com.fernandez.cars.dto;
 
-import com.fernandez.cars.validation.ValidStr;
 import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
