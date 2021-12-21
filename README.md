@@ -2,7 +2,7 @@
 
 docker login -u admin -p admin localhost:8123
 
-**2) docker build -t demo: .**
+**2) docker build -t demo:v1 .**
 
 docker run -p 8084:8084 -it --rm --name demo 
 -e POSTGRES_SERVICES=192.168.1.24 
@@ -60,3 +60,14 @@ https://www.globalwavenet.com/2021/01/20/codeblog01/
 https://www.youtube.com/watch?v=YARrewGcVHc
 
 https://codefresh.io/howtos/using-docker-maven-maven-docker/
+
+http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
+
+https://andrewlock.net/running-kubernetes-and-the-dashboard-with-docker-desktop/
+
+https://www.replex.io/blog/how-to-install-access-and-add-heapster-metrics-to-the-kubernetes-dashboard
+
+mvn clean verify sonar:sonar -Dsonar.projectKey=curso-cars -Dsonar.host.url=http://localhost:9000 -Dsonar.login=bd6917979727a2bcb373d8a233013e0a05ce0145
+
+docker save busybox > busybox.tar
+

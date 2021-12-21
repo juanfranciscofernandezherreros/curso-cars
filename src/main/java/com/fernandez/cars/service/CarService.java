@@ -1,10 +1,7 @@
 package com.fernandez.cars.service;
 
-import com.fernandez.cars.dto.CarDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import java.util.List;
+import com.fernandez.cars.dto.*;
+import org.springframework.data.domain.*;
 
 public interface CarService {
 

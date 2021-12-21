@@ -1,8 +1,7 @@
-version: '2'
+version: '3.7'
 services:
   curso-cars:
-    image: 'demo:latest'
-    restart: always   
+    build: ./
     environment:
        - POSTGRES_SERVICES=192.168.1.24
        - POSTGRES_PORT=5432
@@ -15,4 +14,4 @@ services:
        - API_PORT=8084
        - CONTEXT_PATH=/v1/api
     ports:
-      - '8084:8084'     
+      - '8084:8084'

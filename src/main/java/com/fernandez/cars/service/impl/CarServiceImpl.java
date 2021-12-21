@@ -1,19 +1,17 @@
-package com.fernandez.cars.service;
-import com.fernandez.cars.dto.CarDTO;
-import com.fernandez.cars.exception.EntityNotFoundException;
-import com.fernandez.cars.model.Car;
-import com.fernandez.cars.repository.CarRepository;
-import com.fernandez.cars.utils.ObjectMapperUtils;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+package com.fernandez.cars.service.impl;
+
+import com.fernandez.cars.dto.*;
+import com.fernandez.cars.exception.*;
+import com.fernandez.cars.model.*;
+import com.fernandez.cars.repository.*;
+import com.fernandez.cars.service.*;
+import com.fernandez.cars.utils.*;
+import lombok.*;
+import lombok.extern.slf4j.*;
+import org.springframework.data.domain.*;
+import org.springframework.stereotype.*;
+
+import java.util.*;
 
 @Service
 @Slf4j
