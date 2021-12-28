@@ -1,47 +1,39 @@
 package com.fernandez.cars.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import java.util.Objects;
+import java.io.Serializable;
 
-@Entity
 @Data
-public class Car {
+@EqualsAndHashCode
+@Entity
+public class Car implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
+    @Column(name = "ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @NotNull
-    private String marca;
+    @Column(nullable=false)
+    private String manufacturer;
 
     @NotNull
-    private String modelo;
+    @Column(nullable=false)
+    private String model;
 
     @NotNull
-    private int totalPlaces;
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Car car = (Car) o;
-        return id == car.id &&
-                totalPlaces == car.totalPlaces &&
-                Objects.equals(marca, car.marca) &&
-                Objects.equals(modelo, car.modelo);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, marca, modelo, totalPlaces);
-    }
+    @Column(nullable=false)
+    private String type;
 
 }
 

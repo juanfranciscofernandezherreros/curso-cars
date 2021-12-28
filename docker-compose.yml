@@ -3,7 +3,7 @@ services:
   curso-cars:
     build: ./
     environment:
-       - POSTGRES_SERVICES=192.168.1.24
+       - POSTGRES_SERVICES=localhost
        - POSTGRES_PORT=5432
        - POSTGRES_DB=postgres
        - POSTGRES_USER=postgres
